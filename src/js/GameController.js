@@ -21,19 +21,19 @@ export default class GameController {
     this.randomGamer = [0, 1, 8, 9, 16, 17, 24, 25, 32, 33, 40, 41, 48, 49, 56, 57];
     this.randomEnemy = [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55, 62, 63];
     this.position = [];
-    this.teamEnemy = null;
-    this.teamGamer = null;
+    this.teamEnemy = {};
+    this.teamGamer = {};
     this.click = -1;
     this.enter = -1;
-    this.characterClick = null;
-    this.characterEnter = null;
+    this.characterClick = {};
+    this.characterEnter = {};
     this.characterMove = [];
     this.characterAttack = [];
     this.left = [0, 8, 16, 24, 32, 40, 48, 56];
     this.right = [7, 15, 23, 31, 39, 47, 55, 63];
     this.level = 1;
     this.scores = 0;
-    this.player = null;
+    this.player = {};
   }
 
   init() {
@@ -128,7 +128,6 @@ export default class GameController {
 
   onCellClick(index) {
     // TODO: react to click
-
     if (this.click !== -1) {
       this.gamePlay.deselectCell(this.click);
     }
@@ -136,13 +135,13 @@ export default class GameController {
     if (this.position.find((pos) => pos.position === index)) {
       const click = this.position.find((pos) => pos.position === index);
 
-      if (click.character.type === 'magician' || click.character.type === 'bowman' || click.character.type === 'swordsman') {
+      if (click.character['type'] === 'magician' || click.character['type'] === 'bowman' || click.character['type'] === 'swordsman') {
         this.characterClick = click;
         this.gamePlay.selectCell(index);
         this.click = index;
       }
 
-      if (click.character.type === 'undead' || click.character.type === 'daemon' || click.character.type === 'vampire') {
+      if (click.character['type'] === 'undead' || click.character['type'] === 'daemon' || click.character['type'] === 'vampire') {
         this.clickEnemy(index, click);
         this.player = 1;
       }
@@ -182,7 +181,7 @@ export default class GameController {
         throw new Error(err);
       });
     } else {
-      GamePlay.showError('Выберите своего персонажа!');
+      GamePlay.showError('Вы пытаетесь выбрать персонажа врага. Выберите своего персонажа!');
     }
   }
 
@@ -221,8 +220,8 @@ export default class GameController {
       });
     } else {
       // eslint-disable-next-line max-len
-      const active = this.teamEnemy[Math.floor(Math.random() * Math.floor(this.teamEnemy.length))];// активный игрок
-      this.characterMove = this.makeMove(active);// возможные ходы
+      const active = this.teamEnemy[Math.floor(Math.random() * Math.floor(this.teamEnemy.length))];
+      this.characterMove = this.makeMove(active);
       const pos = this.randomPosition(this.characterMove);
       this.gamePlay.deselectCell(active.position);
       active.position = pos;
@@ -233,7 +232,7 @@ export default class GameController {
   showWin() {
     this.teamEnemy = this.position.filter((item) => item.character.type === 'undead' || item.character.type === 'daemon' || item.character.type === 'vampire');
     this.teamGamer = this.position.filter((item) => item.character.type === 'bowman' || item.character.type === 'magician' || item.character.type === 'swordsman');
-    if (this.teamEnemy.length === 0) { // если игроки врага перебиты
+    if (this.teamEnemy.length === 0) {
       this.level += 1;
 
       for (const char of this.teamGamer) {
@@ -335,13 +334,14 @@ export default class GameController {
 
   // eslint-disable-next-line consistent-return
   makeMove(gamer) {
-    if (gamer.character.type === 'swordsman' || gamer.character.type === 'undead') {
+    const { character } = gamer;
+    if (character.type === 'swordsman' || character.type === 'undead') {
       return this.move(4, gamer.position);
     }
-    if (gamer.character.type === 'bowman' || gamer.character.type === 'vampire') {
+    if (character.type === 'bowman' || character.type === 'vampire') {
       return this.move(2, gamer.position);
     }
-    if (gamer.character.type === 'magician' || gamer.character.type === 'daemon') {
+    if (character.type === 'magician' || character.type === 'daemon') {
       return this.move(1, gamer.position);
     }
   }
@@ -389,13 +389,14 @@ export default class GameController {
 
   // eslint-disable-next-line consistent-return
   makeAttack(gamer) {
-    if (gamer.character.type === 'swordsman' || gamer.character.type === 'undead') {
+    const { character } = gamer;
+    if (character.type === 'swordsman' || character.type === 'undead') {
       return this.attack(1, gamer.position);
     }
-    if (gamer.character.type === 'bowman' || gamer.character.type === 'vampire') {
+    if (character.type === 'bowman' || character.type === 'vampire') {
       return this.attack(2, gamer.position);
     }
-    if (gamer.character.type === 'magician' || gamer.character.type === 'daemon') {
+    if (character.type === 'magician' || character.type === 'daemon') {
       return this.attack(4, gamer.position);
     }
   }
@@ -424,7 +425,6 @@ export default class GameController {
     }
 
     this.characterMove = this.makeMove(this.characterClick);
-
     // eslint-disable-next-line max-len
     if (this.characterMove.indexOf(this.characterEnter.position) === -1 && this.characterMove.indexOf(index) !== -1) {
       this.gamePlay.selectCell(this.click);

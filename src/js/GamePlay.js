@@ -225,7 +225,7 @@ export default class GamePlay {
 
   checkBinding() {
     if (this.container === null) {
-      throw new Error('GamePlay not bind to DOM');
+      throw new Error('GamePlay не привязан к DOM');
     }
   }
 }

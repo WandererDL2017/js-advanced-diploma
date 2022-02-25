@@ -3,11 +3,13 @@ import Character from './Character';
 export default class PositionedCharacter {
   constructor(character, position) {
     if (!(character instanceof Character)) {
-      throw new Error('character must be instance of Character or its children');
+      throw new Error(`
+        Персонаж должен быть создан с помощью класса Character или его Потомков
+      `);
     }
 
     if (typeof position !== 'number') {
-      throw new Error('position must be a number');
+      throw new Error('Должно быть число');
     }
 
     this.character = character;
