@@ -134,14 +134,14 @@ export default class GameController {
 
     if (this.position.find((pos) => pos.position === index)) {
       const click = this.position.find((pos) => pos.position === index);
-
-      if (click.character['type'] === 'magician' || click.character['type'] === 'bowman' || click.character['type'] === 'swordsman') {
+      const { character } = click;
+      if (character.type === 'magician' || character.type === 'bowman' || character.type === 'swordsman') {
         this.characterClick = click;
         this.gamePlay.selectCell(index);
         this.click = index;
       }
 
-      if (click.character['type'] === 'undead' || click.character['type'] === 'daemon' || click.character['type'] === 'vampire') {
+      if (character.type === 'undead' || character.type === 'daemon' || character.type === 'vampire') {
         this.clickEnemy(index, click);
         this.player = 1;
       }
